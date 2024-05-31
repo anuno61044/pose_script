@@ -13,7 +13,7 @@ def process_image():
         model_complexity=1) as holistic:
 
         # Cargar imagen
-        image = cv2.imread('./hitler3.jpg')
+        image = cv2.imread('./hitler.jfif')
 
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = holistic.process(image_rgb)
@@ -36,7 +36,7 @@ def process_image():
             mp_drawing.DrawingSpec(color=(128, 0, 255), thickness=2, circle_radius=1),
             mp_drawing.DrawingSpec(color=(255, 255, 255), thickness=2))
 
-        cv2.imwrite('hitler3Out.jpg', image)
+        cv2.imwrite('hitlerOut.jpg', image)
 
         # Extraer landmarks
         pose_landmarks = results.pose_landmarks.landmark if results.pose_landmarks else None
@@ -58,7 +58,7 @@ def save_pose_data(pose_landmarks, output_file):
         print("No pose detected")
 
 if __name__ == "__main__":
-    output_json = 'pose_info3.json'
+    output_json = 'hitler_info.json'
 
     pose_landmarks = process_image()
     save_pose_data(pose_landmarks, output_json)

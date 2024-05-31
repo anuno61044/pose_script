@@ -26,16 +26,14 @@ def calcular_angulo(P,Q,R):
     
     return theta_deg
 
-def evaluatePose():
+def evaluatePose(human_data, pose):
     # Abrir los archivos JSON y cargar su contenido
-    with open('./pose_info1.json', 'r') as file:
-        pose_data1 = json.load(file)
-    with open('./pose_info3.json', 'r') as file:
-        pose_data3 = json.load(file)
+    with open(f'./{pose}_info.json', 'r') as file:
+        pose_data = json.load(file)
 
     # Acceder a los landmarks de la pose
-    pose_landmarks1 = pose_data1['pose_landmarks']
-    pose_landmarks3 = pose_data3['pose_landmarks']
+    pose_landmarks1 = pose_data['pose_landmarks']
+    pose_landmarks3 = human_data['pose_landmarks']
 
     # Ahora `pose_data` es un objeto Python que contiene los datos del archivo JSON
     # for i in range(32):

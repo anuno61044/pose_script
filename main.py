@@ -3,14 +3,14 @@ import cv2
 import mediapipe as mp
 from comparePose import evaluatePose
 
-def drawCircle(frame):
+def drawCircle(frame, data, pose):
     # Define las coordenadas del centro del círculo y su radio
     center_coordinates = (60, 60)  # Cambia estas coordenadas según sea necesario
     
     radius = 50  # Cambia el radio según sea necesario
 
     # Dibuja el círculo en la imagen
-    if evaluatePose():
+    if evaluatePose(data, pose):
         newframe = cv2.circle(frame, center_coordinates, radius, (0,255,0), thickness=-1)
     else:
         newframe = cv2.circle(frame, center_coordinates, radius, (0,0, 255), thickness=-1)
@@ -20,12 +20,7 @@ def drawCircle(frame):
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
 
-# cap = cv2.VideoCapture("./ganga.webm")
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-
-# Configuración para el escritor de video
-# fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-# out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))  # Ajusta la resolución según sea necesario
 
 with mp_holistic.Holistic(
      static_image_mode=False,
@@ -66,15 +61,11 @@ with mp_holistic.Holistic(
                 ]
             }
             
-          with open('pose_info3.json', 'w') as f:
-            json.dump(data, f, indent=4)
-
-          frame = drawCircle(frame)
+          frame = drawCircle(frame, data, 'hitler')
         
           cv2.imshow("Frame", frame)
           if cv2.waitKey(1) & 0xFF == 27:
                break
 
 cap.release()
-# out.release()
 cv2.destroyAllWindows()
