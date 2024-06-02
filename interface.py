@@ -5,7 +5,12 @@ from PIL import Image, ImageTk
 def update_camera_frame():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
-    img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+    
+    # Redimensionar la imagen capturada
+    resized_frame = cv2.resize(frame, (1100, 900))  # Ajusta new_width y new_height a tus necesidades
+    
+    # Convertir la imagen de BGR a RGB para PIL
+    img = Image.fromarray(cv2.cvtColor(resized_frame, cv2.COLOR_BGR2RGB))
     photo = ImageTk.PhotoImage(image=img)
     camera_label.config(image=photo)
     camera_label.image = photo
