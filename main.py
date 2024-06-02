@@ -3,24 +3,35 @@ import cv2
 import mediapipe as mp
 from comparePose import evaluatePose
 
+count = 0
+
 def drawCircle(frame, data, pose):
+    global count
+     
     # Define las coordenadas del centro del círculo y su radio
     center_coordinates = (60, 60)  # Cambia estas coordenadas según sea necesario
     
     radius = 50  # Cambia el radio según sea necesario
 
     # Dibuja el círculo en la imagen
-    if evaluatePose(data, pose):
-        newframe = cv2.circle(frame, center_coordinates, radius, (0,255,0), thickness=-1)
-    else:
-        newframe = cv2.circle(frame, center_coordinates, radius, (0,0, 255), thickness=-1)
+    if count > 0 or evaluatePose(data, pose):
+        return True, cv2.circle(frame, center_coordinates, radius, (0,255,0), thickness=-1)
+    
             
-    return newframe
+    return False, cv2.circle(frame, center_coordinates, radius, (0,0, 255), thickness=-1)
 
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+
+# Crear ventanas
+cv2.namedWindow('Camera Frame', cv2.WINDOW_NORMAL)
+cv2.namedWindow('Fixed Image', cv2.WINDOW_NORMAL)
+
+arr = ['R', 'spider2', 'gangam', 'hitler', 'spider1']
+# arr = ['hitler']
+i = 0
 
 with mp_holistic.Holistic(
      static_image_mode=False,
@@ -61,9 +72,21 @@ with mp_holistic.Holistic(
                 ]
             }
             
-          frame = drawCircle(frame, data, 'hitler')
+          accepted,frame = drawCircle(frame, data, arr[i])
+          
+          # Mostrar el frame de la cámara y la imagen fija juntos
+          cv2.imshow('Camera Frame', frame)
+          cv2.imshow('Fixed Image', cv2.imread(f'./{arr[i]}Out.jpg'))
+
+          if accepted:
+               count += 1
+          
+          if count > 10:
+               i = (i+1)%len(arr)
+               count = 0
+               
         
-          cv2.imshow("Frame", frame)
+          # cv2.imshow("Frame", frame)
           if cv2.waitKey(1) & 0xFF == 27:
                break
 

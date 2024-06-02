@@ -41,22 +41,46 @@ def evaluatePose(human_data, pose):
     #     print(f'atributo: {pose_landmarks3[i]['name']} en {pose_landmarks3[i]['position']}\n')
 
     angles = [
-        {"name": 'codoI',
-        "points": [14,12,16]},
-        {"name": 'codoD',
-        "points": [13,15,11]},
-        {"name": 'hombroI',
-        "points": [12,14,24]},
-        {"name": 'hombroD',
-        "points": [11, 13, 23]},
-        {"name": 'caderaI',
-        "points": [24, 12, 26]},
-        {"name": 'caderaD',
-        "points": [23, 25, 11]},
-        {"name": 'rodillaI',
-        "points": [26, 28, 24]},
-        {"name": 'rodillaD',
-        "points": [25, 27, 23]},
+        {   
+            "name": 'codoI',
+            "points": [14,12,16],
+            "rel": 2 #"hombroI"
+        },
+        {
+            "name": 'codoD',
+            "points": [13,15,11],
+            "rel": 3 #"hombroD"
+        },
+        {
+            "name": 'hombroI',
+            "points": [12,14,24],
+            "rel": 0 #"codoI"
+        },
+        {
+            "name": 'hombroD',
+            "points": [11, 13, 23],
+            "rel": 1 #"codoD"
+        },
+        {
+            "name": 'caderaI',
+            "points": [24, 12, 26],
+            "rel": 4 #"hombroD"
+        },
+        {
+            "name": 'caderaD',
+            "points": [23, 25, 11],
+            "rel": 5 #"hombroD"
+        },
+        {
+            "name": 'rodillaI',
+            "points": [26, 28, 24],
+            "rel": 6 #"hombroD"
+        },
+        {
+            "name": 'rodillaD',
+            "points": [25, 27, 23],
+            "rel": 7 #"hombroD"
+        },
     ]
 
     angles1 = []
@@ -69,16 +93,24 @@ def evaluatePose(human_data, pose):
         # print(f'Angulo de la {angle['name']} de David: {calcular_angulo(pose_landmarks3[angle['points'][0]]['position'], pose_landmarks3[angle['points'][1]]['position'], pose_landmarks3[angle['points'][2]]['position'])}')
         # print(f'Angulo de la {angle['name']} de Hitler: {calcular_angulo(pose_landmarks1[angle['points'][0]]['position'], pose_landmarks1[angle['points'][1]]['position'], pose_landmarks1[angle['points'][2]]['position'])}\n')
 
-    umbral = 25
+    umbral = 30
+    superUmbral = 45 
     countWrong = 0
     # print(angles2)
     # print(angles1)
     for i in range(len(angles1)):
-        # print(angles1[i] - angles2[i])
+        # si el angulo esta mal
         if abs(angles1[i] - angles2[i]) > umbral:
+            print(f'El angulo {angles[i]['name']} está mal')
             countWrong += 1
-
-    print(f'Tienes {countWrong} cosas mal')
+        
+        
+        # si en angulo en relacion con otro estan mal
+        if abs(angles1[i] - angles2[i]) + abs(angles1[angles[i]["rel"]] - angles2[angles[i]["rel"]]) > superUmbral:
+            print(f'El angulo {angles[i]['name']} está mal por relacion con {angles[angles[i]["rel"]]["name"]}')
+            countWrong += 0.5
+        
+    print('\n\n')
     
     if countWrong > 0:
         return False
@@ -86,7 +118,9 @@ def evaluatePose(human_data, pose):
     return True
 
 if __name__ == "__main__":
-    print(evaluatePose())
+    with open(f'./{"spider1"}_info.json', 'r') as file:
+        human_data = json.load(file)
+    print(evaluatePose(human_data, "spider2"))
 
 
 
