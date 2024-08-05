@@ -30,7 +30,6 @@ cv2.namedWindow('Camera Frame', cv2.WINDOW_NORMAL)
 cv2.namedWindow('Fixed Image', cv2.WINDOW_NORMAL)
 
 arr = ['R', 'spider2', 'gangam', 'hitler', 'spider1']
-# arr = ['hitler']
 i = 0
 
 with mp_holistic.Holistic(

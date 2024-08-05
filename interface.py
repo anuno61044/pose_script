@@ -1,44 +1,52 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 import cv2
-from tkinter import *
-from PIL import Image, ImageTk
 
-def update_camera_frame():
-    _, frame = cap.read()
-    frame = cv2.flip(frame, 1)
-    
-    # Redimensionar la imagen capturada
-    resized_frame = cv2.resize(frame, (1100, 900))  # Ajusta new_width y new_height a tus necesidades
-    
-    # Convertir la imagen de BGR a RGB para PIL
-    img = Image.fromarray(cv2.cvtColor(resized_frame, cv2.COLOR_BGR2RGB))
-    photo = ImageTk.PhotoImage(image=img)
-    camera_label.config(image=photo)
-    camera_label.image = photo
-    root.after(10, update_camera_frame)
+class App(QWidget):
 
-def load_photo(path):
-    img = Image.open(path)
-    photo = ImageTk.PhotoImage(image=img)
-    fixed_label.config(image=photo)
-    fixed_label.image = photo
+    def __init__(self):
+        super().__init__()
+        self.initUI()
 
-root = Tk()
-root.attributes('-fullscreen', True)  # Hace que la ventana sea de pantalla completa
-root.title("Cámara y Foto")
+    def initUI(self):
+        self.setWindowTitle('Camara y Foto')
+        self.setGeometry(300, 300, 800, 600)
 
-cap = cv2.VideoCapture(0)
+        layout = QVBoxLayout()
 
-# Configurar la ventana para usar grid
-root.grid_rowconfigure(0, weight=1)
-root.grid_columnconfigure(0, weight=1)
+        self.label_camara = QLabel(self)
+        self.label_camara.setAlignment(Qt.AlignCenter)
 
-camera_label = Label(root)
-camera_label.grid(row=0, column=0, sticky='nsew')
+        self.label_foto = QLabel(self)
+        self.label_foto.setAlignment(Qt.AlignCenter)
 
-fixed_label = Label(root)
-fixed_label.grid(row=0, column=1, sticky='nsew')
+        layout.addWidget(self.label_camara)
+        layout.addWidget(self.label_foto)
 
-load_photo('./gangam.jpg')
-update_camera_frame()
+        self.setLayout(layout)
 
-root.mainloop()
+        self.show_video()
+
+    def show_video(self):
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = rgb_image.shape
+            bytes_per_line = ch * w
+            qt_image = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
+            p = QPixmap.fromImage(qt_image)
+            self.label_camara.setPixmap(p)
+
+            # Cargar y mostrar la foto
+            self.label_foto.setPixmap(QPixmap('ruta/a/tu/foto.jpg'))
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = App()
+    sys.exit(app.exec_())
